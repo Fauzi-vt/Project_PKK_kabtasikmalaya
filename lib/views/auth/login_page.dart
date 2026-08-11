@@ -51,7 +51,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<KeluargaProvider>(context);
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: Stack(
@@ -79,66 +78,37 @@ class _LoginPageState extends State<LoginPage> {
 
           // ── Scrollable main content ──
           SafeArea(
-            child: SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: screenHeight - MediaQuery.of(context).padding.top,
-                ),
+            child: Center(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(vertical: 24),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 20),
-                    // ── Logo Badge – matches reference circular badge style ──
-                    Container(
-                      width: 110,
+                    const SizedBox(height: 10),
+
+                    // ── 3D Logo matching exact user attachment ──
+                    Image.asset(
+                      'assets/images/logo_pkk_3d.png',
                       height: 110,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                        border: Border.all(
-                          color: const Color(0xFF90CAF9), // light blue ring
-                          width: 3,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withAlpha(55),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                            spreadRadius: 0,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Icon(
+                            Icons.shield,
+                            size: 80,
+                            color: Colors.white,
                           ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(6),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/logo_pkk.png',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(
-                                Icons.shield,
-                                size: 70,
-                                color: Color(0xFF0288D1),
-                              ),
-                        ),
-                      ),
                     ),
-                    const SizedBox(height: 16),
-                    // App name
+                    const SizedBox(height: 12),
+
+                    // ── App Title ──
                     const Text(
                       'PKKITA',
                       style: TextStyle(
-                        fontSize: 46,
+                        fontSize: 42,
                         fontWeight: FontWeight.w900,
                         color: Colors.white,
-                        letterSpacing: 1.2,
-                        shadows: [
-                          Shadow(
-                            offset: Offset(0, 2),
-                            blurRadius: 6,
-                            color: Colors.black26,
-                          ),
-                        ],
+                        letterSpacing: 1.5,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -149,23 +119,23 @@ class _LoginPageState extends State<LoginPage> {
                         fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
-                        height: 1.4,
+                        height: 1.35,
                       ),
                     ),
                     const SizedBox(height: 24),
 
                     // ── White Floating Card Form ──
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
+                      margin: const EdgeInsets.symmetric(horizontal: 22),
+                      padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            blurRadius: 15,
-                            offset: const Offset(0, 8),
+                            color: Colors.black.withValues(alpha: 0.08),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
                           ),
                         ],
                       ),
@@ -174,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // ── Card title: centered ──
+                            // Card Title
                             const Center(
                               child: Text(
                                 'Selamat Datang Kembali 👋',
@@ -185,22 +155,23 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            // ── Card subtitle: centered ──
+                            const SizedBox(height: 8),
+
+                            // Card Subtitle
                             const Center(
                               child: Text(
                                 'Silakan masuk untuk mengakses\nlayanan PKK Kabupaten Tasikmalaya.',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Color(0xFF90A4AE),
-                                  height: 1.45,
+                                  color: Color(0xFF758599),
+                                  height: 1.4,
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 24),
 
-                            // ── Username / NIP Field ──
+                            // Username / NIP Field Label
                             const Text(
                               'Username / NIP',
                               style: TextStyle(
@@ -209,23 +180,24 @@ class _LoginPageState extends State<LoginPage> {
                                 color: Color(0xFF102851),
                               ),
                             ),
-                            const SizedBox(height: 6),
+                            const SizedBox(height: 8),
                             TextFormField(
                               controller: _identifierController,
                               keyboardType: TextInputType.text,
                               textInputAction: TextInputAction.next,
                               decoration: InputDecoration(
                                 hintText: 'Masukkan username atau NIP',
-                                hintStyle: const TextStyle(
-                                  color: Colors.grey,
+                                hintStyle: TextStyle(
+                                  color: Colors.grey.shade400,
                                   fontSize: 14,
                                 ),
-                                prefixIcon: const Icon(
+                                prefixIcon: Icon(
                                   Icons.person_outline,
-                                  color: Colors.grey,
+                                  color: Colors.grey.shade500,
+                                  size: 22,
                                 ),
                                 filled: true,
-                                fillColor: Colors.white, // Putih bersih
+                                fillColor: Colors.white,
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                   vertical: 14,
@@ -245,7 +217,7 @@ class _LoginPageState extends State<LoginPage> {
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: Color(0xFF1E88E5),
+                                    color: Color(0xFF1A60D0),
                                     width: 1.5,
                                   ),
                                 ),
@@ -253,7 +225,6 @@ class _LoginPageState extends State<LoginPage> {
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
                                     color: Color(0xFFE53935),
-                                    width: 1,
                                   ),
                                 ),
                                 focusedErrorBorder: OutlineInputBorder(
@@ -271,9 +242,9 @@ class _LoginPageState extends State<LoginPage> {
                                 return null;
                               },
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 18),
 
-                            // ── Kata Sandi Field ──
+                            // Kata Sandi Field Label
                             const Text(
                               'Kata Sandi',
                               style: TextStyle(
@@ -282,7 +253,7 @@ class _LoginPageState extends State<LoginPage> {
                                 color: Color(0xFF102851),
                               ),
                             ),
-                            const SizedBox(height: 6),
+                            const SizedBox(height: 8),
                             TextFormField(
                               controller: _passwordController,
                               obscureText: _obscurePassword,
@@ -290,20 +261,21 @@ class _LoginPageState extends State<LoginPage> {
                               onFieldSubmitted: (_) => _handleLogin(),
                               decoration: InputDecoration(
                                 hintText: 'Masukkan kata sandi',
-                                hintStyle: const TextStyle(
-                                  color: Colors.grey,
+                                hintStyle: TextStyle(
+                                  color: Colors.grey.shade400,
                                   fontSize: 14,
                                 ),
-                                prefixIcon: const Icon(
+                                prefixIcon: Icon(
                                   Icons.lock_outline,
-                                  color: Colors.grey,
+                                  color: Colors.grey.shade500,
+                                  size: 22,
                                 ),
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     _obscurePassword
                                         ? Icons.visibility_outlined
                                         : Icons.visibility_off_outlined,
-                                    color: Colors.grey,
+                                    color: Colors.grey.shade500,
                                     size: 22,
                                   ),
                                   onPressed: () {
@@ -314,41 +286,38 @@ class _LoginPageState extends State<LoginPage> {
                                   },
                                 ),
                                 filled: true,
-                                fillColor: Colors.white, // Putih Bersih
+                                fillColor: Colors.white,
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                   vertical: 14,
                                 ),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide(
                                     color: Colors.grey.shade300,
-                                    width: 1,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide(
                                     color: Colors.grey.shade300,
-                                    width: 1,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: Color(0xFF2884E0),
+                                    color: Color(0xFF1A60D0),
                                     width: 1.5,
                                   ),
                                 ),
                                 errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
                                     color: Color(0xFFE53935),
-                                    width: 1,
                                   ),
                                 ),
                                 focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
                                     color: Color(0xFFE53935),
                                     width: 1.5,
@@ -365,13 +334,13 @@ class _LoginPageState extends State<LoginPage> {
                                 return null;
                               },
                             ),
-                            const SizedBox(height: 6),
+                            const SizedBox(height: 8),
 
-                            // ── Lupa Kata Sandi ──
+                            // Lupa Kata Sandi Link
                             Align(
                               alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed: () {
+                              child: GestureDetector(
+                                onTap: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text(
@@ -381,42 +350,33 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                   );
                                 },
-                                style: TextButton.styleFrom(
-                                  padding: EdgeInsets.zero,
-                                  minimumSize: Size.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
                                 child: const Text(
                                   'Lupa kata sandi?',
                                   style: TextStyle(
-                                    color: Color(
-                                      0xFF1565C0,
-                                    ), // Biru khas pkkita
+                                    color: Color(0xFF1A60D0),
                                     fontSize: 13,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 24),
 
-                            // ── Primary Login Button ──
+                            // Primary Login Button
                             SizedBox(
                               width: double.infinity,
-                              height: 50,
+                              height: 52,
                               child: ElevatedButton(
                                 onPressed: provider.isLoading
                                     ? null
                                     : _handleLogin,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF1A5FC8),
+                                  backgroundColor: const Color(0xFF1A60D0),
                                   foregroundColor: Colors.white,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  padding: EdgeInsets.zero,
                                 ),
                                 child: provider.isLoading
                                     ? const SizedBox(
@@ -426,15 +386,15 @@ class _LoginPageState extends State<LoginPage> {
                                           strokeWidth: 2.5,
                                           valueColor:
                                               AlwaysStoppedAnimation<Color>(
-                                                Colors.white,
-                                              ),
+                                            Colors.white,
+                                          ),
                                         ),
                                       )
-                                    : Stack(
-                                        alignment: Alignment.center,
+                                    : const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          // Centered label
-                                          const Text(
+                                          Text(
                                             'Masuk ke PKKITA',
                                             style: TextStyle(
                                               fontSize: 16,
@@ -442,14 +402,11 @@ class _LoginPageState extends State<LoginPage> {
                                               color: Colors.white,
                                             ),
                                           ),
-                                          // Right-pinned arrow icon
-                                          const Positioned(
-                                            right: 16,
-                                            child: Icon(
-                                              Icons.arrow_forward_rounded,
-                                              size: 20,
-                                              color: Colors.white,
-                                            ),
+                                          SizedBox(width: 8),
+                                          Icon(
+                                            Icons.arrow_forward_rounded,
+                                            size: 20,
+                                            color: Colors.white,
                                           ),
                                         ],
                                       ),
@@ -457,7 +414,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             const SizedBox(height: 24),
 
-                            // ── "atau" Divider ──
+                            // Divider "atau"
                             Row(
                               children: [
                                 Expanded(
@@ -488,10 +445,11 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             const SizedBox(height: 20),
 
-                            // ── "Masuk sebagai Tamu" Outlined Button ──
+                            // Secondary Guest Button
                             SizedBox(
+                              width: double.infinity,
                               height: 50,
-                              child: OutlinedButton.icon(
+                              child: OutlinedButton(
                                 onPressed: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
@@ -502,27 +460,33 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                   );
                                 },
-                                icon: const Icon(
-                                  Icons.people_outline,
-                                  size: 20,
-                                  color: Color(0xFF1565C0),
-                                ),
-                                label: const Text(
-                                  'Masuk sebagai Tamu',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1565C0),
-                                  ),
-                                ),
                                 style: OutlinedButton.styleFrom(
-                                  side: BorderSide(
-                                    color: Colors.blue.shade200,
-                                    width: 1,
+                                  side: const BorderSide(
+                                    color: Color(0xFFD0E1FD),
+                                    width: 1.2,
                                   ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
+                                ),
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.group_outlined,
+                                      size: 20,
+                                      color: Color(0xFF1A60D0),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Masuk sebagai Tamu',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF1A60D0),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -530,7 +494,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -541,5 +505,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
 
 
