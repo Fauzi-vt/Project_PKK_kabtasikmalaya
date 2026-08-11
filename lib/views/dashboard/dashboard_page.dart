@@ -4,6 +4,7 @@ import '../../providers/keluarga_provider.dart';
 import '../keluarga/keluarga_list_page.dart';
 import '../rekapitulasi/rekapitulasi_page.dart';
 import '../kondisi_rumah/kondisi_rumah_page.dart';
+import '../potensi/aku_hatinya_pkk_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -1147,19 +1148,11 @@ class _DashboardPageState extends State<DashboardPage>
                     description: 'Pemanfaatan Pekarangan & UP2K',
                     icon: Icons.yard_rounded,
                     color: const Color(0xFF2E7D32),
-                    onTap: () => _openFeatureModalSheet(
-                      title: 'Aku Hatinya PKK',
-                      subtitle:
-                          'Amalkan dan Kukuhkan Halaman Asri Teratur Indah dan Nyaman',
-                      icon: Icons.yard_rounded,
-                      color: const Color(0xFF2E7D32),
-                      children: [
-                        _buildCheckItem('Tanaman Pangan & Toga', true,
-                            'Kencur, Jahe, Cabai, Sayuran Pekarangan'),
-                        _buildCheckItem(
-                            'Industri Rumah Tangga (UP2K)', true,
-                            'Kerajinan Anyaman & Olahan Makanan Lokal'),
-                      ],
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AkuHatinyaPKKPage(),
+                      ),
                     ),
                   ),
                 ),
