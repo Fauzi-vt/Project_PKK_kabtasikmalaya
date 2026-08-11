@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/keluarga_provider.dart';
+import 'keluarga_detail_page.dart';
 
 class KeluargaListPage extends StatefulWidget {
   const KeluargaListPage({super.key});
@@ -301,8 +302,12 @@ class _KeluargaListPageState extends State<KeluargaListPage>
           child: InkWell(
             borderRadius: BorderRadius.circular(18),
             onTap: () {
-              // TODO: Navigate ke detail keluarga
-              _showDetailSheet(item);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => KeluargaDetailPage(keluarga: item),
+                ),
+              );
             },
             splashColor: const Color(0xFF1A60D0).withValues(alpha: 0.07),
             highlightColor: Colors.transparent,
@@ -594,161 +599,4 @@ class _KeluargaListPageState extends State<KeluargaListPage>
     );
   }
 
-  // ── Detail Bottom Sheet ────────────────────────────────────────────────────
-  void _showDetailSheet(Map<String, dynamic> item) {
-    final bool isVerified = item['status'] == 'Terverifikasi';
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 44,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF1A60D0), Color(0xFF0F3E90)],
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Icon(Icons.home_rounded,
-                      color: Colors.white, size: 28),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item['kepalaKeluarga'] ?? '-',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF102851),
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Kepala Keluarga',
-                        style: TextStyle(
-                            fontSize: 12, color: Colors.grey.shade500),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Divider(height: 1),
-            const SizedBox(height: 16),
-            _buildDetailRow('No. Kartu Keluarga', item['noKk'] ?? '-',
-                Icons.credit_card_rounded),
-            _buildDetailRow(
-                'Wilayah Tugas',
-                'RT ${item['rt'] ?? '-'} / RW ${item['rw'] ?? '-'}',
-                Icons.location_on_rounded),
-            _buildDetailRow('Jumlah Anggota',
-                '${item['jumlahAnggota'] ?? 0} Orang', Icons.people_rounded),
-            _buildDetailRow('Kelompok Dasawisma',
-                item['dasawisma'] ?? '-', Icons.grid_view_rounded),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                const Icon(Icons.verified_rounded,
-                    size: 16, color: Color(0xFF78909C)),
-                const SizedBox(width: 10),
-                const Text('Status',
-                    style:
-                        TextStyle(fontSize: 13, color: Color(0xFF546E7A))),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: isVerified
-                        ? const Color(0xFFE8F5E9)
-                        : const Color(0xFFFFF3E0),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    item['status'] ?? '-',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: isVerified
-                          ? const Color(0xFF2E7D32)
-                          : const Color(0xFFE65100),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: OutlinedButton.icon(
-                onPressed: () => Navigator.pop(ctx),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF1A60D0),
-                  side: const BorderSide(color: Color(0xFF1A60D0)),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-                icon: const Icon(Icons.close_rounded, size: 18),
-                label: const Text('Tutup',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Icon(icon, size: 16, color: const Color(0xFF78909C)),
-          const SizedBox(width: 10),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 13, color: Color(0xFF546E7A)),
-          ),
-          const Spacer(),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF102851),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
