@@ -46,4 +46,53 @@ class ApiService {
       'token': 'mock_jwt_token_pkk_dasawisma_2026',
     };
   }
+
+  /// Fetches list of families (KK) for Dasawisma.
+  Future<List<Map<String, dynamic>>> getKeluargaData() async {
+    // Simulate network delay
+    await Future.delayed(const Duration(milliseconds: 1000));
+
+    return [
+      {
+        'id': 'KK-001',
+        'noKk': '3206011204200001',
+        'kepalaKeluarga': 'Ahmad Subagja',
+        'rt': '003',
+        'rw': '005',
+        'jumlahAnggota': 4,
+        'dasawisma': 'Melati 01',
+        'status': 'Terverifikasi',
+      },
+      {
+        'id': 'KK-002',
+        'noKk': '3206011204200002',
+        'kepalaKeluarga': 'Hendra Wijaya',
+        'rt': '003',
+        'rw': '005',
+        'jumlahAnggota': 3,
+        'dasawisma': 'Melati 01',
+        'status': 'Terverifikasi',
+      },
+      {
+        'id': 'KK-003',
+        'noKk': '3206011204200003',
+        'kepalaKeluarga': 'Budi Santoso',
+        'rt': '003',
+        'rw': '005',
+        'jumlahAnggota': 5,
+        'dasawisma': 'Melati 01',
+        'status': 'Pending Sync',
+      },
+      {
+        'id': 'KK-004',
+        'noKk': '3206011204200004',
+        'kepalaKeluarga': 'Dedi Kurniawan',
+        'rt': '003',
+        'rw': '005',
+        'jumlahAnggota': 2,
+        'dasawisma': 'Melati 01',
+        'status': 'Terverifikasi',
+      },
+    ];
+  }
 }

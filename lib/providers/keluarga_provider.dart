@@ -4,6 +4,7 @@ import '../services/api_service.dart';
 class KeluargaProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
 
+  // ─── Auth State ───────────────────────────────────────────────────────────
   bool _isLoading = false;
   String? _errorMessage;
   Map<String, dynamic>? _currentUser;
@@ -14,6 +15,15 @@ class KeluargaProvider with ChangeNotifier {
   bool get isAuthenticated => _currentUser != null && _token != null;
   Map<String, dynamic>? get currentUser => _currentUser;
   String? get token => _token;
+
+  // ─── Keluarga List State ───────────────────────────────────────────────────
+  List<Map<String, dynamic>> _keluargaList = [];
+  bool _isLoadingKeluarga = false;
+  String? _keluargaError;
+
+  List<Map<String, dynamic>> get keluargaList => _keluargaList;
+  bool get isLoadingKeluarga => _isLoadingKeluarga;
+  String? get keluargaError => _keluargaError;
 
   void clearError() {
     _errorMessage = null;
@@ -41,6 +51,24 @@ class KeluargaProvider with ChangeNotifier {
       _errorMessage = e.toString().replaceAll('Exception: ', '');
       notifyListeners();
       return false;
+    }
+  }
+
+  /// Fetches daftar keluarga (KK) from ApiService asynchronously.
+  Future<void> getKeluargaData() async {
+    _isLoadingKeluarga = true;
+    _keluargaError = null;
+    notifyListeners();
+
+    try {
+      final data = await _apiService.getKeluargaData();
+      _keluargaList = data;
+      _isLoadingKeluarga = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoadingKeluarga = false;
+      _keluargaError = e.toString().replaceAll('Exception: ', '');
+      notifyListeners();
     }
   }
 

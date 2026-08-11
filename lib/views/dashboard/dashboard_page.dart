@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/keluarga_provider.dart';
+import '../keluarga/keluarga_list_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -193,213 +194,6 @@ class _DashboardPageState extends State<DashboardPage>
     );
   }
 
-  void _openDataKeluargaSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => StatefulBuilder(
-        builder: (context, setSheetState) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.85,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-            ),
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 44,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Color(0xFFE3F2FD),
-                          child: Icon(Icons.family_restroom_rounded,
-                              color: Color(0xFF1A60D0)),
-                        ),
-                        SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Data Keluarga (KK)',
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF102851)),
-                            ),
-                            Text(
-                              'Daftar Rumah Tangga Dasawisma',
-                              style: TextStyle(
-                                  fontSize: 12, color: Color(0xFF78909C)),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _openTambahKkForm();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1A60D0),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                      icon: const Icon(Icons.add_rounded, size: 18),
-                      label: const Text('Tambah KK',
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                // Search bar
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Cari Nama Kepala Keluarga / No. KK...',
-                    hintStyle: TextStyle(
-                        color: Colors.grey.shade400, fontSize: 13),
-                    prefixIcon: const Icon(Icons.search_rounded,
-                        color: Color(0xFF1A60D0)),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: Colors.grey.shade200),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: Colors.grey.shade200),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: _familyList.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 10),
-                    itemBuilder: (context, index) {
-                      final item = _familyList[index];
-                      final bool isVerified = item['status'] == 'Terverifikasi';
-                      return Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFFEBF1F6)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.02),
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF1A60D0).withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(Icons.home_rounded,
-                                  color: Color(0xFF1A60D0), size: 24),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item['kepalaKeluarga'],
-                                    style: const TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF102851)),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    'NO. KK: ${item['noKk']}',
-                                    style: const TextStyle(
-                                        fontSize: 11,
-                                        color: Color(0xFF78909C),
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 2),
-                                        decoration: BoxDecoration(
-                                          color: isVerified
-                                              ? const Color(0xFFE8F5E9)
-                                              : const Color(0xFFFFF3E0),
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                        ),
-                                        child: Text(
-                                          item['status'],
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            color: isVerified
-                                                ? const Color(0xFF2E7D32)
-                                                : const Color(0xFFE65100),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '👥 ${item['anggota']} Anggota',
-                                        style: const TextStyle(
-                                            fontSize: 11,
-                                            color: Color(0xFF546E7A),
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const Icon(Icons.chevron_right_rounded,
-                                color: Colors.grey),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
 
   void _openTambahKkForm() {
     final nameCtrl = TextEditingController();
@@ -1246,7 +1040,12 @@ class _DashboardPageState extends State<DashboardPage>
                   subtitle: 'Pendataan rumah tangga & Kepala Keluarga (KK)',
                   icon: Icons.family_restroom_rounded,
                   accentColor: const Color(0xFF1A60D0),
-                  onTap: _openDataKeluargaSheet,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const KeluargaListPage(),
+                    ),
+                  ),
                 ),
 
                 // 2. Daftar Warga
