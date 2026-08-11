@@ -5,6 +5,7 @@ import '../keluarga/keluarga_list_page.dart';
 import '../rekapitulasi/rekapitulasi_page.dart';
 import '../kondisi_rumah/kondisi_rumah_page.dart';
 import '../potensi/aku_hatinya_pkk_page.dart';
+import '../kesehatan/posyandu_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -1165,18 +1166,11 @@ class _DashboardPageState extends State<DashboardPage>
                     description: 'Pencatatan Bumil & Kesehatan Balita',
                     icon: Icons.child_care_rounded,
                     color: const Color(0xFFD81B60),
-                    onTap: () => _openFeatureModalSheet(
-                      title: 'Kesehatan Ibu & Anak (KIA)',
-                      subtitle:
-                          'Monitoring Posyandu, Usia Kehamilan & Imunisasi Balita',
-                      icon: Icons.child_care_rounded,
-                      color: const Color(0xFFD81B60),
-                      children: [
-                        _buildCheckItem('Pemantauan Ibu Hamil', true,
-                            '3 Ibu Hamil terdata (Rutins Cek Posyandu)'),
-                        _buildCheckItem('Imunisasi Balita Lengkap', true,
-                            '7 Balita Lulus Imunisasi Dasar'),
-                      ],
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const PosyanduPage(),
+                      ),
                     ),
                   ),
                 ),
@@ -1527,43 +1521,6 @@ class _DashboardPageState extends State<DashboardPage>
         ],
       ),
     );
-  }
-
-  Widget _buildCheckItem(String title, bool checked, String subtitle) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFEBF1F6)),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            checked ? Icons.check_circle_rounded : Icons.cancel_rounded,
-            color: checked ? const Color(0xFF2E7D32) : Colors.red,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF102851))),
-                Text(subtitle,
-                    style: const TextStyle(
-                        fontSize: 11, color: Color(0xFF78909C))),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+  }}
 
 
