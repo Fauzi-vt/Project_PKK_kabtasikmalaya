@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/anggota_keluarga.dart';
+import '../warga/warga_form_page.dart';
 
 class KeluargaDetailPage extends StatefulWidget {
   final Map<String, dynamic> keluarga;
@@ -365,23 +366,33 @@ class _KeluargaDetailPageState extends State<KeluargaDetailPage>
 
       // ── FAB: Tambah Warga ─────────────────────────────────────────────────
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // TODO: Navigate ke form tambah warga
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Row(
-                children: [
-                  Icon(Icons.info_outline, color: Colors.white, size: 18),
-                  SizedBox(width: 8),
-                  Text('Form Tambah Warga akan tersedia segera'),
-                ],
+        onPressed: () async {
+          final result = await Navigator.push<Map<String, dynamic>>(
+            context,
+            MaterialPageRoute(
+              builder: (_) => WargaFormPage(
+                keluargaId: kk['id'] ?? kk['noKk'] ?? 'KK-001',
+                namaKepalaKeluarga: kk['kepalaKeluarga'],
               ),
-              backgroundColor: const Color(0xFF1A60D0),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
             ),
           );
+
+          if (result != null && mounted) {
+            setState(() {
+              _anggotaList.add(AnggotaKeluarga(
+                id: 'WRG-${DateTime.now().millisecondsSinceEpoch}',
+                nama: result['nama'] ?? '',
+                nik: result['nik'] ?? '',
+                statusHubungan: result['statusHubungan'] ?? 'Anak',
+                jenisKelamin:
+                    (result['jenisKelamin'] ?? '').toString().startsWith('L')
+                        ? 'L'
+                        : 'P',
+                usia: 25,
+                statusKhusus: '',
+              ));
+            });
+          }
         },
         backgroundColor: const Color(0xFF1A60D0),
         foregroundColor: Colors.white,
