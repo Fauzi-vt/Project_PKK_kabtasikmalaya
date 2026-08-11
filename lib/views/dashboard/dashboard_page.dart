@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/keluarga_provider.dart';
 import '../keluarga/keluarga_list_page.dart';
 import '../rekapitulasi/rekapitulasi_page.dart';
+import '../kondisi_rumah/kondisi_rumah_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -1079,23 +1080,11 @@ class _DashboardPageState extends State<DashboardPage>
                   subtitle: 'Evaluasi hunian, jamban, SPAL & sumber air',
                   icon: Icons.home_work_rounded,
                   accentColor: const Color(0xFFE65100),
-                  onTap: () => _openFeatureModalSheet(
-                    title: 'Evaluasi Kondisi Rumah',
-                    subtitle: 'Kriteria Kelayakan Hunian & Sanitasi Lingkungan',
-                    icon: Icons.home_work_rounded,
-                    color: const Color(0xFFE65100),
-                    children: [
-                      _buildCheckItem(
-                          'Kategori Layak Huni (RLH)', true, 'Struktur kokoh & ventilasi memadai'),
-                      _buildCheckItem(
-                          'Jamban Keluarga Sehat', true, 'Memiliki Septic Tank sendiri'),
-                      _buildCheckItem(
-                          'Tempat Pembuangan Sampah', true, 'Tersedia pemilahan organik/anorganik'),
-                      _buildCheckItem(
-                          'Saluran Pembuangan Air (SPAL)', true, 'SPAL tertutup & lancar'),
-                      _buildCheckItem(
-                          'Sumber Air Bersih', true, 'Air PDAM / Sumur Terlindung'),
-                    ],
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const KondisiRumahPage(),
+                    ),
                   ),
                 ),
 
