@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/keluarga_provider.dart';
 import '../keluarga/keluarga_list_page.dart';
+import '../rekapitulasi/rekapitulasi_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -1104,59 +1105,11 @@ class _DashboardPageState extends State<DashboardPage>
                   subtitle: 'Ringkasan statistik otomatis KK, Warga & KIA',
                   icon: Icons.analytics_rounded,
                   accentColor: const Color(0xFF6A1B9A),
-                  onTap: () => _openFeatureModalSheet(
-                    title: 'Laporan Rekapitulasi Data',
-                    subtitle: 'Ringkasan Grafik & Ekspor Data PDF/Excel',
-                    icon: Icons.analytics_rounded,
-                    color: const Color(0xFF6A1B9A),
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF6A1B9A).withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Laporan Dasawisma Melati 01',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF6A1B9A))),
-                            SizedBox(height: 4),
-                            Text(
-                                '• Total 24 KK terdata\n• 88 Total Warga (42 Pria, 46 Wanita)\n• 7 Balita Sehat, 3 Ibu Hamil\n• 22 Rumah Sehat (91.6%)',
-                                style: TextStyle(
-                                    fontSize: 13, height: 1.5)),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 46,
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF6A1B9A),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                          ),
-                          icon: const Icon(Icons.download_rounded, size: 18),
-                          label: const Text('Unduh Laporan Rekap (PDF)',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Mengunduh Laporan Rekapitulasi PDF...'),
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const RekapitulasiPage(),
+                    ),
                   ),
                 ),
               ],
