@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'providers/keluarga_provider.dart';
 import 'views/auth/login_page.dart';
-import 'views/dashboard/dashboard_page.dart';
+import 'views/main_navigation_page.dart';
+import 'views/splash/splash_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,13 +20,13 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => KeluargaProvider()),
       ],
       child: MaterialApp(
-        title: 'PKK Dasawisma',
+        title: 'PKKITA Tasikmalaya',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF0288D1),
-            primary: const Color(0xFF0288D1),
+            seedColor: const Color(0xFF1A60D0),
+            primary: const Color(0xFF1A60D0),
             secondary: const Color(0xFF0097A7),
           ),
           scaffoldBackgroundColor: const Color(0xFFF5F9FC),
@@ -32,11 +34,19 @@ class MyApp extends StatelessWidget {
             elevation: 0,
             centerTitle: true,
           ),
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: {
+              TargetPlatform.android: ZoomPageTransitionsBuilder(),
+              TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+            },
+          ),
         ),
-        initialRoute: '/',
+        initialRoute: '/splash',
         routes: {
+          '/splash': (context) => const SplashPage(),
+          '/login': (context) => const LoginPage(),
           '/': (context) => const LoginPage(),
-          '/dashboard': (context) => const DashboardPage(),
+          '/dashboard': (context) => const MainNavigationPage(),
         },
       ),
     );

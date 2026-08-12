@@ -154,51 +154,6 @@ class _DashboardPageState extends State<DashboardPage>
     );
   }
 
-  void _showLogoutDialog(BuildContext context, KeluargaProvider provider) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
-          children: [
-            Icon(Icons.logout_rounded, color: Color(0xFFD32F2F)),
-            SizedBox(width: 10),
-            Text('Konfirmasi Keluar',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          ],
-        ),
-        content: const Text(
-          'Apakah Anda yakin ingin keluar dari akun PKKITA?',
-          style: TextStyle(color: Color(0xFF546E7A), fontSize: 14),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Batal',
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFD32F2F),
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-            ),
-            onPressed: () {
-              Navigator.pop(ctx);
-              provider.logout();
-              Navigator.pushReplacementNamed(context, '/');
-            },
-            child: const Text('Keluar Sesi',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
-
-
   void _openTambahKkForm() {
     final nameCtrl = TextEditingController();
     final kkCtrl = TextEditingController();
@@ -522,16 +477,7 @@ class _DashboardPageState extends State<DashboardPage>
               ),
             ),
           ),
-          const SizedBox(width: 8),
-
-          // Tombol Logout Door Exit Icon
-          IconButton(
-            icon: const Icon(Icons.exit_to_app_rounded,
-                color: Colors.white, size: 26),
-            tooltip: 'Keluar Sesi',
-            onPressed: () => _showLogoutDialog(context, provider),
-          ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 14),
         ],
       ),
 
@@ -847,64 +793,70 @@ class _DashboardPageState extends State<DashboardPage>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Statistik Real-Time',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF102851),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Statistik Real-Time',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF102851),
+                        ),
                       ),
-                    ),
-                    Text(
-                      'Monitoring data kelompok Dasawisma',
-                      style: TextStyle(fontSize: 11, color: Color(0xFF78909C)),
-                    ),
-                  ],
-                ),
-                // Period Filter Selector Tabs
-                Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                      Text(
+                        'Monitoring data kelompok Dasawisma',
+                        style: TextStyle(fontSize: 11, color: Color(0xFF78909C)),
+                      ),
+                    ],
                   ),
-                  child: Row(
-                    children: ['Hari Ini', 'Bulan Ini', 'Tahun Ini'].map((p) {
-                      final isSelected = _selectedPeriod == p;
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedPeriod = p;
-                            _counterController.reset();
-                            _counterController.forward();
-                          });
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? const Color(0xFF1A60D0)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            p,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  isSelected ? Colors.white : Colors.grey.shade600,
+                ),
+                const SizedBox(width: 8),
+                // Period Filter Selector Tabs
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: Row(
+                      children: ['Hari Ini', 'Bulan Ini', 'Tahun Ini'].map((p) {
+                        final isSelected = _selectedPeriod == p;
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedPeriod = p;
+                              _counterController.reset();
+                              _counterController.forward();
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? const Color(0xFF1A60D0)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              p,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color:
+                                    isSelected ? Colors.white : Colors.grey.shade600,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }).toList(),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ],
@@ -1183,6 +1135,7 @@ class _DashboardPageState extends State<DashboardPage>
 
       // ── Quick Action Floating Button (+ Tambah Data) ──
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'dashboard_fab_tambah_kk',
         onPressed: _openTambahKkForm,
         backgroundColor: const Color(0xFF1A60D0),
         foregroundColor: Colors.white,

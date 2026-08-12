@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../models/report_data.dart';
+import '../../providers/keluarga_provider.dart';
+import '../../services/report_export_service.dart';
 
 class RekapitulasiPage extends StatelessWidget {
   const RekapitulasiPage({super.key});
@@ -31,33 +35,19 @@ class RekapitulasiPage extends StatelessWidget {
         ),
         backgroundColor: const Color(0xFF1A60D0),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              color: Colors.white, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                    color: Colors.white, size: 20),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         actions: [
           IconButton(
             icon: const Icon(Icons.file_download_rounded,
                 color: Colors.white, size: 24),
             tooltip: 'Unduh Laporan',
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Row(
-                    children: [
-                      Icon(Icons.picture_as_pdf_rounded, color: Colors.white),
-                      SizedBox(width: 10),
-                      Text('Simulasi ekspor laporan PDF berhasil disiapkan'),
-                    ],
-                  ),
-                  backgroundColor: const Color(0xFF1A60D0),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-              );
-            },
+            onPressed: () => _showExportReportBottomSheet(context),
           ),
           const SizedBox(width: 4),
         ],
@@ -879,6 +869,724 @@ class RekapitulasiPage extends StatelessWidget {
                 ),
               );
             }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormatOptionCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected ? color.withValues(alpha: 0.08) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected ? color : const Color(0xFFE2E8F0),
+            width: isSelected ? 1.8 : 1.0,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? color : const Color(0xFF102851),
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: Color(0xFF78909C),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showExportReportBottomSheet(BuildContext context) {
+    final now = DateTime.now();
+    final monthNames = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    final currentMonth = monthNames[now.month - 1];
+    final quarter = ((now.month - 1) ~/ 3) + 1;
+
+    String selectedFormat = 'PDF';
+    String selectedScope = 'bulan';
+    bool isExporting = false;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
+                top: 20,
+                left: 20,
+                right: 20,
+              ),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 44,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1A60D0).withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.picture_as_pdf_rounded,
+                            color: Color(0xFF1A60D0),
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Ekspor & Cetak Laporan',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF102851),
+                                ),
+                              ),
+                              Text(
+                                'Pilih format & cakupan data Dasawisma Melati 01',
+                                style: TextStyle(fontSize: 12, color: Color(0xFF78909C)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Format Selection
+                    const Text(
+                      'Format Dokumen',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF102851),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildFormatOptionCard(
+                            title: 'Dokumen PDF',
+                            subtitle: 'Formal (.pdf)',
+                            icon: Icons.picture_as_pdf_rounded,
+                            color: const Color(0xFFD32F2F),
+                            isSelected: selectedFormat == 'PDF',
+                            onTap: () {
+                              setModalState(() => selectedFormat = 'PDF');
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildFormatOptionCard(
+                            title: 'Spreadsheet',
+                            subtitle: 'Excel (.xlsx)',
+                            icon: Icons.table_chart_rounded,
+                            color: const Color(0xFF2E7D32),
+                            isSelected: selectedFormat == 'Excel',
+                            onTap: () {
+                              setModalState(() => selectedFormat = 'Excel');
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 18),
+
+                    // Scope Selection
+                    const Text(
+                      'Cakupan Periode Laporan',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF102851),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        ChoiceChip(
+                          label: Text('Bulan Ini ($currentMonth ${now.year})'),
+                          selected: selectedScope == 'bulan',
+                          selectedColor: const Color(0xFF1A60D0).withValues(alpha: 0.15),
+                          labelStyle: TextStyle(
+                            color: selectedScope == 'bulan'
+                                ? const Color(0xFF1A60D0)
+                                : Colors.grey.shade700,
+                            fontWeight: selectedScope == 'bulan'
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                          onSelected: (val) {
+                            if (val) setModalState(() => selectedScope = 'bulan');
+                          },
+                        ),
+                        ChoiceChip(
+                          label: Text('Triwulan $quarter (Q$quarter ${now.year})'),
+                          selected: selectedScope == 'triwulan',
+                          selectedColor: const Color(0xFF1A60D0).withValues(alpha: 0.15),
+                          labelStyle: TextStyle(
+                            color: selectedScope == 'triwulan'
+                                ? const Color(0xFF1A60D0)
+                                : Colors.grey.shade700,
+                            fontWeight: selectedScope == 'triwulan'
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                          onSelected: (val) {
+                            if (val) setModalState(() => selectedScope = 'triwulan');
+                          },
+                        ),
+                        ChoiceChip(
+                          label: Text('Tahun Berjalan (${now.year})'),
+                          selected: selectedScope == 'tahun',
+                          selectedColor: const Color(0xFF1A60D0).withValues(alpha: 0.15),
+                          labelStyle: TextStyle(
+                            color: selectedScope == 'tahun'
+                                ? const Color(0xFF1A60D0)
+                                : Colors.grey.shade700,
+                            fontWeight: selectedScope == 'tahun'
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                          onSelected: (val) {
+                            if (val) setModalState(() => selectedScope = 'tahun');
+                          },
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 18),
+
+                    // Preview Summary Card
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                      ),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.remove_red_eye_outlined,
+                                  size: 16, color: Color(0xFF546E7A)),
+                              SizedBox(width: 6),
+                              Text(
+                                'Pratinjau Data Ringkasan',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF546E7A),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Total Kepala Keluarga:',
+                                  style: TextStyle(fontSize: 12, color: Color(0xFF78909C))),
+                              Text('142 KK',
+                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF102851))),
+                            ],
+                          ),
+                          SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Total Anggota Warga:',
+                                  style: TextStyle(fontSize: 12, color: Color(0xFF78909C))),
+                              Text('518 Jiwa',
+                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF102851))),
+                            ],
+                          ),
+                          SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Cakupan Rumah Sehat:',
+                                  style: TextStyle(fontSize: 12, color: Color(0xFF78909C))),
+                              Text('88.7% (126/142)',
+                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF2E7D32))),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 22),
+
+                    // Submit Export Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1A60D0),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        onPressed: isExporting
+                            ? null
+                            : () async {
+                                setModalState(() => isExporting = true);
+                                try {
+                                  final provider = Provider.of<KeluargaProvider>(
+                                      context,
+                                      listen: false);
+                                  final cadreName = provider
+                                          .currentUser?['nama'] as String? ??
+                                      'Siti Aminah, S.Pd';
+
+                                  final scopeLabel =
+                                      ReportExportService.calculateScopeLabel(
+                                          selectedScope, now);
+                                  final reportData = ReportData.fromDasawisma(
+                                    cadreName: cadreName,
+                                    scopeType: selectedScope,
+                                    scopeLabel: scopeLabel,
+                                  );
+
+                                  final ReportExportResult result;
+                                  if (selectedFormat == 'PDF') {
+                                    result = await ReportExportService.exportPdf(
+                                        reportData);
+                                  } else {
+                                    result =
+                                        await ReportExportService.exportExcel(
+                                            reportData);
+                                  }
+
+                                  if (!context.mounted) return;
+                                  Navigator.pop(ctx);
+                                  _showExportSuccessModal(context, result);
+                                } catch (e) {
+                                  if (!context.mounted) return;
+                                  setModalState(() => isExporting = false);
+                                  Navigator.pop(ctx);
+                                  _showExportErrorModal(
+                                      context,
+                                      e,
+                                      () =>
+                                          _showExportReportBottomSheet(context));
+                                }
+                              },
+                        icon: isExporting
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor:
+                                      AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                            : Icon(
+                                selectedFormat == 'PDF'
+                                    ? Icons.picture_as_pdf_rounded
+                                    : Icons.table_chart_rounded,
+                                size: 20,
+                              ),
+                        label: Text(
+                          isExporting
+                              ? 'Memproses Dokumen...'
+                              : 'Ekspor Dokumen $selectedFormat',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showExportSuccessModal(
+      BuildContext context, ReportExportResult result) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
+            top: 20,
+            left: 20,
+            right: 20,
+          ),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+
+              // Success Header
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFE8F5E9),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check_circle_rounded,
+                      color: Color(0xFF2E7D32),
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Laporan Berhasil Dibuat',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF102851),
+                          ),
+                        ),
+                        Text(
+                          'Dokumen ${result.format} telah siap diakses',
+                          style: const TextStyle(
+                              fontSize: 12, color: Color(0xFF78909C)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // File Metadata Container
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          result.format == 'PDF'
+                              ? Icons.picture_as_pdf_rounded
+                              : Icons.table_chart_rounded,
+                          color: result.format == 'PDF'
+                              ? const Color(0xFFD32F2F)
+                              : const Color(0xFF2E7D32),
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            result.filename,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF102851),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 18),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Format Dokumen:',
+                            style: TextStyle(
+                                fontSize: 11, color: Color(0xFF78909C))),
+                        Text(result.format,
+                            style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF102851))),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Cakupan Periode:',
+                            style: TextStyle(
+                                fontSize: 11, color: Color(0xFF78909C))),
+                        Text(result.scopeLabel,
+                            style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF102851))),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Lokasi Berkas: ',
+                            style: TextStyle(
+                                fontSize: 11, color: Color(0xFF78909C))),
+                        Expanded(
+                          child: Text(
+                            result.file.path,
+                            style: const TextStyle(
+                                fontSize: 10,
+                                color: Color(0xFF546E7A),
+                                fontStyle: FontStyle.italic),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 22),
+
+              // Actions: Buka File, Bagikan, Export Lagi
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1A60D0),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  onPressed: () async {
+                    final opened =
+                        await ReportExportService.openFile(result.file);
+                    if (!opened && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Berkas tersimpan di: ${result.file.path}'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.open_in_new_rounded, size: 20),
+                  label: const Text(
+                    'Buka Berkas Laporan',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 44,
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF102851),
+                          side: const BorderSide(color: Color(0xFFCFD8DC)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {
+                          ReportExportService.shareFile(
+                              result.file, result.scopeLabel);
+                        },
+                        icon: const Icon(Icons.share_rounded, size: 18),
+                        label: const Text(
+                          'Bagikan',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: SizedBox(
+                      height: 44,
+                      child: TextButton.icon(
+                        style: TextButton.styleFrom(
+                          foregroundColor: const Color(0xFF1A60D0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          _showExportReportBottomSheet(context);
+                        },
+                        icon: const Icon(Icons.refresh_rounded, size: 18),
+                        label: const Text(
+                          'Ekspor Lagi',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showExportErrorModal(
+      BuildContext context, dynamic error, VoidCallback onRetry) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Row(
+          children: [
+            Icon(Icons.error_outline_rounded, color: Color(0xFFD32F2F), size: 28),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Gagal Membuat Laporan',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Terjadi kendala saat menyusun atau menyimpan berkas laporan. Pastikan ruang penyimpanan perangkat mencukupi.',
+          style: TextStyle(fontSize: 13, color: Color(0xFF546E7A)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Batal', style: TextStyle(color: Colors.grey)),
+          ),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A60D0),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+              onRetry();
+            },
+            icon: const Icon(Icons.refresh_rounded, size: 18),
+            label: const Text('Coba Lagi',
+                style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),

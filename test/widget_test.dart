@@ -9,18 +9,20 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify that LoginPage header and form elements exist
-    expect(find.text('PKK DASAWISMA'), findsOneWidget);
-    expect(find.text('Masuk ke Akun'), findsOneWidget);
-    expect(find.text('Email / NIP'), findsOneWidget);
+    expect(find.text('PKKITA'), findsAtLeastNWidgets(1));
+    expect(find.text('Selamat Datang Kembali 👋'), findsOneWidget);
+    expect(find.text('Username / NIP'), findsOneWidget);
     expect(find.text('Kata Sandi'), findsOneWidget);
-    expect(find.widgetWithText(ElevatedButton, 'MASUK'), findsOneWidget);
+    expect(find.text('Masuk ke PKKITA'), findsOneWidget);
 
     // Enter email/NIP and password
     await tester.enterText(find.byType(TextFormField).at(0), 'admin@pkk.id');
     await tester.enterText(find.byType(TextFormField).at(1), 'password123');
 
-    // Tap the MASUK button
-    await tester.tap(find.widgetWithText(ElevatedButton, 'MASUK'));
+    // Tap the login button
+    final loginButton = find.text('Masuk ke PKKITA');
+    await tester.ensureVisible(loginButton);
+    await tester.tap(loginButton);
     await tester.pump();
 
     // Expect loading state or async processing
@@ -30,7 +32,7 @@ void main() {
     await tester.pumpAndSettle(const Duration(milliseconds: 1500));
 
     // Verify navigation to DashboardPage
-    expect(find.text('Dashboard PKK Dasawisma'), findsOneWidget);
-    expect(find.text('Data Keluarga'), findsOneWidget);
+    expect(find.text('Total KK'), findsOneWidget);
+    expect(find.text('Tambah Data KK'), findsOneWidget);
   });
 }
